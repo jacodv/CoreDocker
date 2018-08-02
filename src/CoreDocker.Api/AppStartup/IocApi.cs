@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -7,10 +8,14 @@ using CoreDocker.Api.Components.Users;
 using CoreDocker.Api.GraphQl;
 using CoreDocker.Api.GraphQl.DynamicQuery;
 using CoreDocker.Api.Security;
+using CoreDocker.Core.Components.Users;
 using CoreDocker.Core.Startup;
-using CoreDocker.Dal.MongoDb;
+using CoreDocker.Core.Vendor;
+using CoreDocker.Dal.InMemoryCollections;
+using CoreDocker.Dal.Models.Projects;
+using CoreDocker.Dal.Models.Users;
 using CoreDocker.Dal.Persistance;
-using CoreDocker.Utilities;
+using CoreDocker.Utilities.Helpers;
 using GraphQL;
 using GraphQL.Authorization;
 using GraphQL.Http;
@@ -99,17 +104,22 @@ namespace CoreDocker.Api.AppStartup
 
         protected override IGeneralUnitOfWorkFactory GetInstanceOfIGeneralUnitOfWorkFactory(IComponentContext arg)
         {
+            var instanceOfIGeneralUnitOfWorkFactory = new InMemoryGeneralUnitOfWorkFactory();
+            var generalUnitOfWork = instanceOfIGeneralUnitOfWorkFactory.GetConnection();
+            var users = generalUnitOfWork.Users;
+            var admin = new User() { Name = "Admin user", Email = "admin@admin.com", HashedPassword = PasswordHash.CreateHash("admin!") };
+            admin.Roles.Add(RoleManager.Admin.Name);
+            users.Add(admin).Wait();
+
+            var guest = new User() { Name = "Guest", Email = "guest@guest.com", HashedPassword = PasswordHash.CreateHash("guest!") };
+            guest.Roles.Add(RoleManager.Guest.Name);
+            users.Add(guest).Wait();
+
+            Enumerable.Range(1, 10)
+                .Select(x => new Project() {Name = $"Project {x}.0"})
+                .ForEach(x => generalUnitOfWork.Projects.Add(x).Wait());
             
-            _log.Info($"Connecting to :{Settings.Instance.MongoConnection} [{Settings.Instance.MongoDatabase}]");
-            try
-            {
-                return new MongoConnectionFactory(Settings.Instance.MongoConnection, Settings.Instance.MongoDatabase);
-            }
-            catch (Exception e)
-            {
-                _log.Error($"Error connecting to the database:{e.Message}", e);
-                throw;
-            }
+            return instanceOfIGeneralUnitOfWorkFactory;
         }
 
         #endregion

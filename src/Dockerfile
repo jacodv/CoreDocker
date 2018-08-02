@@ -15,7 +15,7 @@ COPY CoreDocker.Dal.MongoDb/*.csproj ./CoreDocker.Dal.MongoDb/
 
 WORKDIR /app/CoreDocker.Api
 RUN dir
-RUN dotnet restore
+RUN dotnet restore CoreDocker.Api.csproj
 
 # Copy everything else and build
 WORKDIR /app
@@ -30,7 +30,7 @@ COPY CoreDocker.Utilities/ ./CoreDocker.Utilities/
 COPY CoreDocker.Dal.MongoDb/ ./CoreDocker.Dal.MongoDb/
 
 WORKDIR /app/CoreDocker.Api
-RUN dotnet publish -c Release -o out
+RUN dotnet publish CoreDocker.Api.csproj -c Release -o out
 RUN ls out
 
 FROM node:8.11-alpine AS build-web

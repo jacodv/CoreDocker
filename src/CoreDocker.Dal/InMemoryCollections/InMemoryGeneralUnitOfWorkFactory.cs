@@ -5,7 +5,7 @@ namespace CoreDocker.Dal.InMemoryCollections
 {
     public class InMemoryGeneralUnitOfWorkFactory : IGeneralUnitOfWorkFactory
     {
-        private InMemoryGeneralUnitOfWork _inMemoryGeneralUnitOfWork;
+        private readonly InMemoryGeneralUnitOfWork _inMemoryGeneralUnitOfWork;
 
         public InMemoryGeneralUnitOfWorkFactory()
         {
@@ -16,5 +16,7 @@ namespace CoreDocker.Dal.InMemoryCollections
         {
             return _inMemoryGeneralUnitOfWork;
         }
+
+      
     }
 }

@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CoreDocker.Shared\CoreDocker.Shared.csproj" />
     <ProjectReference Include="..\CoreDocker.Dal\CoreDocker.Dal.csproj" />
-    <ProjectReference Include="..\CoreDocker.Dal.MongoDb\CoreDocker.Dal.MongoDb.csproj" />
     <ProjectReference Include="..\CoreDocker.Core\CoreDocker.Core.csproj" />
     <ProjectReference Include="..\CoreDocker.Utilities\CoreDocker.Utilities.csproj" />
   </ItemGroup>
@@ -42,6 +41,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.1.0" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\CoreDocker.Website\dist\**\*.*">
