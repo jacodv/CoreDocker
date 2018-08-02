@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using CoreDocker.Api.AppStartup;
+using CoreDocker.Core.Components.Users;
 using CoreDocker.Dal.Models.Users;
 using CoreDocker.Sdk.RestApi;
 using CoreDocker.Sdk.RestApi.Clients;
@@ -172,17 +174,22 @@ namespace CoreDocker.Sdk.Tests.WebApi
                 }
             "
             };
-
+            var userManager = IocApi.Instance.Resolve<IUserManager>();
             // action
-            var graphQlResponse = await _adminConnection.Value.GraphQlPost(request);
-            var userModel = await _adminConnection.Value.Users.WhoAmI();
-            object data = graphQlResponse.Data;
-            data.Dump("graphQlResponse.Data");
-            
+            var userFromDb = await userManager.GetUserByEmail("admin@admin.com");
+            var userFromGraphQl = await _adminConnection.Value.GraphQlPost(request);
+            var userFromWebApi = await _adminConnection.Value.Users.WhoAmI();
             // assert
-            DateTime updateDate = graphQlResponse.Data.users.me.updateDate;
-            var userModelUpdateDate = userModel.UpdateDate;
-            updateDate.ToUniversalTime().Should().Be(userModelUpdateDate.ToUniversalTime());
+            DateTime dateFromGraphQl = userFromGraphQl.Data.users.me.updateDate;
+            var dateFromApi = userFromWebApi.UpdateDate;
+            var dateFromDb = userFromDb.UpdateDate;
+           
+            dateFromGraphQl.ToUniversalTime().Should().Be(dateFromApi.ToUniversalTime()); // this fails with 2 hours mismatch <2018-08-02 12:06:43.482>, but found <2018-08-01 22:00:00>
+            dateFromGraphQl.ToUniversalTime().Should().Be(dateFromGraphQl.ToUniversalTime());
+
+            dateFromGraphQl.Kind.Should().Be(DateTimeKind.Utc); // this fails when using DateGraphType kind is unspecified
+            dateFromApi.Kind.Should().Be(DateTimeKind.Local);
+            dateFromDb.Kind.Should().Be(DateTimeKind.Local);
         }
 
         [Test]

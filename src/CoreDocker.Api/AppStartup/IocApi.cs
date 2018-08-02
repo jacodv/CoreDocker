@@ -47,7 +47,6 @@ namespace CoreDocker.Api.AppStartup
             builder.RegisterType<DocumentExecuter>().As<IDocumentExecuter>().SingleInstance();
             builder.RegisterType<DocumentWriter>().As<IDocumentWriter>().SingleInstance();
 
-            builder.RegisterType<OriginalDateGraphType>().SingleInstance();
 
             //validation
             //services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
