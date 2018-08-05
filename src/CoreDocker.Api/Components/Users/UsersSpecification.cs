@@ -2,14 +2,17 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using CoreDocker.Api.AppStartup;
 using CoreDocker.Api.GraphQl;
 using CoreDocker.Api.GraphQl.DynamicQuery;
 using CoreDocker.Dal.Models.Auth;
 using CoreDocker.Dal.Models.Users;
 using CoreDocker.Shared.Models.Users;
+using CoreDocker.Utilities.Helpers;
 using GraphQL.Authorization;
 using GraphQL.Types;
 using log4net;
+using MongoDB.Bson;
 
 namespace CoreDocker.Api.Components.Users
 {
@@ -78,7 +81,10 @@ namespace CoreDocker.Api.Components.Users
             Field<ListGraphType<RoleSpecification>>(
                 "roles",
                 Description = "All roles",
-                resolve: safe.Wrap(context => users.Roles())
+                resolve: safe.Wrap(context =>
+                {
+                    return users.Roles();
+                })
             );
 
             Field<RoleSpecification>(

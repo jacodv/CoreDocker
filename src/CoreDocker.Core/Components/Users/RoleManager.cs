@@ -5,9 +5,18 @@ using CoreDocker.Dal.Models;
 using CoreDocker.Dal.Models.Auth;
 using CoreDocker.Dal.Models.Users;
 using CoreDocker.Utilities.Helpers;
+using MediatR;
 
 namespace CoreDocker.Core.Components.Users
 {
+    public class Registered : IAsyncNotification
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public List<string> Roles { get; internal set; }
+    }
+
     public class RoleManager : IRoleManager
     {
         private static readonly List<Role> _roles;

@@ -16,6 +16,7 @@ using FluentAssertions;
 using FluentAssertions.Equivalency;
 using GraphQL.Common.Request;
 using GraphQL.Common.Response;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace CoreDocker.Sdk.Tests.WebApi
@@ -183,6 +184,37 @@ namespace CoreDocker.Sdk.Tests.WebApi
             DateTime updateDate = graphQlResponse.Data.users.me.updateDate;
             var userModelUpdateDate = userModel.UpdateDate;
             updateDate.ToUniversalTime().Should().Be(userModelUpdateDate.ToUniversalTime());
+        }
+
+        [Test]
+        public async Task GraphQl_GettingRoles_ShouldGetRoles()
+        {
+            // arrange
+            Setup();
+            var request = new GraphQLRequest
+            {
+                Query = @"
+                {
+                    users {
+                        roles {
+                            name
+                        }
+                    }
+                }
+            "
+            };
+
+            // action
+            var adminConnectionValue = _adminConnection.Value;
+            var graphQlResponse = await adminConnectionValue.GraphQlPost(request);
+            var userModel = await adminConnectionValue.Users.WhoAmI();
+            object data = graphQlResponse.Data;
+            data.Dump("graphQlResponse.Data");
+
+            // assert
+            JArray roles = graphQlResponse.Data.users.roles;
+
+            roles.Should().NotBeEmpty();
         }
 
         [Test]

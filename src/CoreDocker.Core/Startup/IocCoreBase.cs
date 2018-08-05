@@ -11,6 +11,7 @@ using CoreDocker.Dal.Models.Projects;
 using CoreDocker.Dal.Models.Users;
 using CoreDocker.Dal.Persistance;
 using log4net;
+using MediatR;
 using UserGrant = CoreDocker.Dal.Models.Users.UserGrant;
 using ValidatorFactoryBase = CoreDocker.Dal.Validation.ValidatorFactoryBase;
 
@@ -25,7 +26,8 @@ namespace CoreDocker.Core.Startup
 		    SetupManagers(builder);
 			SetupTools(builder);
             SetupValidation(builder);
-		}
+		    builder.AddMediatR(typeof(IocCoreBase).GetTypeInfo().Assembly);
+        }
 
 	    protected virtual void SetupMongoDb(ContainerBuilder builder)
 	    {

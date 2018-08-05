@@ -21,6 +21,7 @@
     <PackageReference Include="GraphQL" Version="2.0.0-alpha-952" />
     <PackageReference Include="GraphQL.Authorization" Version="1.0.16-alpha-16" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.1.0-alpha0022" />
+    <PackageReference Include="GraphQL.Server.Transports.WebSockets" Version="3.1.0-alpha0022" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="3.1.0-alpha0022" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="IdentityServer4" Version="2.2.0" />
@@ -50,8 +51,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MediatR">
+      <HintPath>C:\Users\User-pc\.nuget\packages\mediatr\2.1.0\lib\netstandard1.1\MediatR.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="logSettings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\Notifications\" />
   </ItemGroup>
 </Project>

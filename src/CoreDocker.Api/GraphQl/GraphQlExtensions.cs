@@ -6,7 +6,9 @@ using CoreDocker.Core.Components.Users;
 using CoreDocker.Dal.Models.Auth;
 using GraphQL.Builders;
 using GraphQL.Types;
+using GraphQL.Validation;
 using IdentityModel;
+using IdentityServer4;
 
 namespace CoreDocker.Api.GraphQl
 {
@@ -30,7 +32,7 @@ namespace CoreDocker.Api.GraphQl
         public static bool HasPermission(this IProvideMetadata type, Activity permission)
         {
             var permissions = type.GetMetadata<IEnumerable<Activity>>(PermissionsKey, new List<Activity>());
-            return permissions.Any(x => string.Equals(x, permission));
+            return permissions.Any(x => Equals(x, permission));
         }
 
         public static void RequirePermission(this IProvideMetadata type, Activity permission)
@@ -74,5 +76,37 @@ namespace CoreDocker.Api.GraphQl
             return permissions.All(p =>
                 principalClaims.Any(x => x.Value == UserClaimProvider.ToPolicyName(p)));
         }
+
+        public static ClaimsPrincipal GetClaimsPrincipal(this ValidationContext context)
+        {
+            return BuildClaimsPrincipal(context.UserContext);
+        }
+
+        private static ClaimsPrincipal BuildClaimsPrincipal(object contextUserContext)
+        {
+            var graphQlUserContext = (GraphQlSetup.GraphQLUserContext) contextUserContext;
+            return graphQlUserContext.User ?? new ClaimsPrincipal();
+        }
+
+        public static ClaimsPrincipal GetClaimsPrincipal(this ResolveFieldContext<object> context)
+        {
+            return BuildClaimsPrincipal(context.UserContext);
+        }
+
+        public static string GetId(this ClaimsPrincipal context)
+        {
+            return context.Claims.Where(x => x.Type == JwtClaimTypes.Id).Select(x => x.Value).FirstOrDefault();
+        }
+
+        public static string GetName(this ClaimsPrincipal context)
+        {
+            return context.Claims.Where(x => x.Type == JwtClaimTypes.GivenName).Select(x => x.Value).FirstOrDefault();
+        }
+        
+        public static string GetEmail(this ClaimsPrincipal context)
+        {
+            return context.Claims.Where(x => x.Type == IdentityServerConstants.StandardScopes.Email).Select(x => x.Value).FirstOrDefault();
+        }
+
     }
 }

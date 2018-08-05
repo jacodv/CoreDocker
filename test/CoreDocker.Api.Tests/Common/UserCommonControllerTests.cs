@@ -10,6 +10,7 @@ using CoreDocker.Dal.Models.Users;
 using CoreDocker.Shared.Models;
 using CoreDocker.Shared.Models.Users;
 using CoreDocker.Utilities.Tests.Tools;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
@@ -23,6 +24,7 @@ namespace CoreDocker.Api.Tests.Common
         private UserCommonController _projectCommonController;
         private Mock<IRoleManager> _mockIRoleManager;
         private Mock<IHttpContextAccessor> _mockIHttpContextAccessor;
+        private Mock<IMediator> _mockIMediator;
 
         #region Overrides of BaseCommonControllerTests
 
@@ -31,8 +33,9 @@ namespace CoreDocker.Api.Tests.Common
             _mockIUserManager = new Mock<IUserManager>(MockBehavior.Strict);
             _mockIRoleManager = new Mock<IRoleManager>(MockBehavior.Strict);
             _mockIHttpContextAccessor = new Mock<IHttpContextAccessor>(MockBehavior.Strict);
+            _mockIMediator = new Mock<IMediator>();
             
-            _projectCommonController = new UserCommonController(_mockIUserManager.Object, _mockIRoleManager.Object, _mockIHttpContextAccessor.Object);
+            _projectCommonController = new UserCommonController(_mockIUserManager.Object, _mockIRoleManager.Object, _mockIHttpContextAccessor.Object, _mockIMediator.Object);
             
             base.Setup();
         }

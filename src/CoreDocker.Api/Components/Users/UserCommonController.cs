@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading.Tasks;
 using CoreDocker.Api.Mappers;
 using CoreDocker.Api.WebApi.Controllers;
 using CoreDocker.Core.Components.Users;
+using CoreDocker.Core.Framework.Mappers;
 using CoreDocker.Dal.Models.Users;
 using CoreDocker.Shared.Interfaces.Shared;
 using CoreDocker.Shared.Models.Users;
 using log4net;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace CoreDocker.Api.Components.Users
@@ -20,12 +23,14 @@ namespace CoreDocker.Api.Components.Users
         private readonly IUserManager _userManager;
         private readonly IRoleManager _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private IMediator _mediator;
 
-        public UserCommonController(IUserManager userManager, IRoleManager roleManager, IHttpContextAccessor httpContextAccessor) : base(userManager)
+        public UserCommonController(IUserManager userManager, IRoleManager roleManager, IHttpContextAccessor httpContextAccessor, IMediator mediator) : base(userManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
+            _mediator = mediator;
         }
 
         #region IUserControllerActions Members
@@ -35,6 +40,7 @@ namespace CoreDocker.Api.Components.Users
             User user = model.ToDal();
             user.Roles.Add(RoleManager.Guest.Name);
             User savedUser = await _userManager.Save(user, model.Password);
+            await _mediator.PublishAsync(user.ToRegistered());
             return savedUser.ToModel();
         }
 
@@ -90,4 +96,6 @@ namespace CoreDocker.Api.Components.Users
             
         }
     }
+    
+
 }

@@ -69,6 +69,13 @@ namespace CoreDocker.Api.AppStartup
             builder.RegisterType<QueryResultSpecification>().SingleInstance();
             builder.RegisterType<DefaultSchema>().As<ISchema>().SingleInstance();
 
+            builder.RegisterType<DefaultSubscription>().SingleInstance();
+            builder.RegisterType<Chat>().As<IChat>().SingleInstance();
+            builder.RegisterType<MessageFromType>().SingleInstance();
+            builder.RegisterType<MessageType>().SingleInstance();
+
+
+
             /*user*/
             builder.RegisterType<UserSpecification>();
             builder.RegisterType<UsersSpecification>();

@@ -12,7 +12,6 @@ namespace CoreDocker.Api.GraphQl
             Name = "Mutation";
             Field<ProjectsMutationSpecification>("projects", resolve: context => Task.FromResult(new object()));
             Field<UsersMutationSpecification>("users", resolve: context => Task.FromResult(new object()));
-
         }
 
     }
